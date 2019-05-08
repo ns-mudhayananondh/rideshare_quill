@@ -5,38 +5,34 @@
         <div class="col-xl-4 col-lg-5">
           <div class="card card-primary animated fadeInUp animation-delay-7">
             <div class="card-body">
-              <form class="form-horizontal">
-                <fieldset class="container justify-content-end">
+              <form class="form-horizontal" v-on:submit.prevent="newQuill()" >
+                <fieldset class="container">
                   <div class="form-group row justify-content-end">
-                    <div class="form-group row justify-content-end">
-                      <label for="select112" class="col-lg-2 control-label"></label>
-                      <div class="col-lg-10">
-                        <select
-                          id="select112"
-                          class="form-control selectpicker"
-                          data-live-search="true"
-                          data-dropup-auto="false"
-                        >
-                          <option>Ea nam qui vel consequatur</option>
-                          <option>Dolorem perspiciatis adipisci</option>
-                          <option>Aperiam, debitis deleniti</option>
-                          <option>Accusamus non qui amet eum</option>
-                          <option>Doloremque commodi impedit</option>
-                        </select>
+                      <div class="form-group row justify-content-end">
+                        <h3>Select a neighborhood:</h3>
+                        <label for="select112" class="col-lg-2 control-label"></label>
+                        <div class="col-lg-10">
+                          <select id="select112" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false">
+                            <option>7 - Lincoln Park</option>
+                            <option>Dolorem perspiciatis adipisci </option>
+                            <option>Aperiam, debitis deleniti</option>
+                            <option>Accusamus non qui amet eum</option>
+                            <option>Doloremque commodi impedit</option>
+                          </select>
+                        </div>
                       </div>
-                    </div>
                     <label class="col-lg-2 control-label justify-content-end"></label>
                     <div class="col-lg-10">
                       <div class="radio radio-primary">
                         <h3>Persona:</h3>
                         <label>
-                          <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="" />
+                          <input type="radio" name="optionsRadios" v-model="persona" value="driver" checked="" />
                           Driver
                         </label>
                       </div>
                       <div class="radio radio-primary">
                         <label>
-                          <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" />
+                          <input type="radio" name="optionsRadios" v-model="persona" value="passenger" />
                           Passenger
                         </label>
                       </div>
@@ -49,13 +45,13 @@
                       <div class="radio radio-primary">
                         <h3>Ride Type:</h3>
                         <label>
-                          <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="" />
+                          <input type="radio" name="optionsRadios" v-model="ride_type" value="individual" checked="" />
                           Individual
                         </label>
                       </div>
                       <div class="radio radio-primary">
                         <label>
-                          <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" />
+                          <input type="radio" name="optionsRadios" v-model="ride_type" value="shared" />
                           Shared
                         </label>
                       </div>
@@ -130,9 +126,47 @@
 
 <script>
 // @ is an alias to /src
-import axios from "axios";
+var axios = require("axios");
 
 export default {
-  name: "rideshare"
+  data: function() {
+    return {
+      commarea_full_selection: "7 - Lincoln Park",
+      persona: "",
+      ride_type: "",
+      commarea_number: ""
+    };
+  },
+  methods: {
+    newQuill: function() {
+      console.log(this.persona);
+      console.log(this.ride_type);
+      console.log(this.commarea_full_selection);
+      let commarea_number = this.commarea_full_selection.split('-')[0].trim();
+      let commarea_prettyname = this.commarea_full_selection.split('-')[1].trim();
+      console.log(commarea_number);
+      console.log(commarea_prettyname);
+      this.errors = [];
+      let pickup_community_area = commarea_number
+      let url = "https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&pickup_community_area=" + pickup_community_area ;
+      console.log(url)
+      axios
+        .get(url)
+        .then(response => {
+          console.log(response);
+        })
+        .catch(error => {
+          console.log(error.response.data.errors);
+          this.errors = error.response.data.errors;
+        });
+    }
+  }
 };
 </script>
+
+const randomId = 128398723
+const url = `/post/${randomId}`;
+getPost(url)
+export const getPost = (funcParamURL) => {
+  return axios.get(`${funcParamURL}`);
+}
