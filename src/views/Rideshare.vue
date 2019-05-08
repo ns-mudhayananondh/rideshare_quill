@@ -111,11 +111,9 @@
                 Map
               </h3>
             </div>
-            <iframe
-              width="100%"
-              height="340"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d48342.06480344582!2d-73.980069429762!3d40.775680208459505!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c2589a018531e3%3A0xb9df1f7387a94119!2sCentral+Park!5e0!3m2!1sen!2sus!4v1491233314840"
-            ></iframe>
+            <div id="google-map-div">
+            <img id="google-map" src="https://maps.googleapis.com/maps/api/staticmap?center=Chicago&zoom=14&size=730x380&key=AIzaSyD_1TkqGPWSc7UueUNPXDQLuNvUFuygIok"/>
+          </div>
           </div>
         </div>
       </div>
@@ -192,6 +190,8 @@ export default {
               console.log(quill_response)
             })
 
+            // TODO: put Quill API server side to get around CORS issue
+
           })
         })
         .catch(error => {
@@ -200,6 +200,9 @@ export default {
         });
 
         // Google Maps call for pretty name neighborhood
+        let map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" + encodeURI(commarea_prettyname) + ",Chicago&zoom=15&size=730x380&key=AIzaSyD_1TkqGPWSc7UueUNPXDQLuNvUFuygIok"
+        console.log(map_url)
+        document.getElementById('google-map').src = map_url
 
     }
   }
