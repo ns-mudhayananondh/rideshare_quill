@@ -147,40 +147,60 @@ export default {
       console.log(commarea_number);
       console.log(commarea_prettyname);
       this.errors = [];
+
+      // TODO: add in date filter for TNP data
       let tnp_pickup_url = "https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&pickup_community_area=" + commarea_number;
       console.log(tnp_pickup_url);
       let tnp_dropoff_url = "https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&dropoff_community_area=" + commarea_number;
       console.log(tnp_dropoff_url);
 
-      // TNP API call for pickups
+      // TNP API calls
       axios
         .get(tnp_pickup_url)
         .then(response => {
           let tnp_pickups_response = response.data;
           console.log("tnp_pickups_response")
           console.log(tnp_pickups_response)
+
+          axios.get(tnp_dropoff_url)
+          .then(response => {
+            let tnp_dropoffs_response = response.data
+
+            // Now that we have both TNP results, concat themt ogether into final JSON spec for Quill
+            // Also add in metadata from form
+            var json_output_to_quill = {
+              "persona": this.persona,
+              "ride_type": this.ride_type,
+              "trips": tnp_pickups_response.concat(tnp_dropoffs_response)
+            }
+
+            console.log(json_output_to_quill)
+
+            let axiosConfig = {
+              headers: {
+                "content-type": "application/json",
+                "x-ns-accepts": "json",
+                "x-ns-api-token": "5cd1b5d935a4462969042285",
+                "x-ns-template": "5cd1b62135a44655154c706f"
+              }
+            }
+            // Now send the data spec to Quill API
+            axios.post('https://api.narrativescience.com/v4/editorial/5cd1b61f35a4464c554c7023/story/', json_output_to_quill, axiosConfig)
+            .then(response => {
+              let quill_response = response.data
+              console.log("quill_response")
+              console.log(quill_response)
+            })
+
+          })
         })
         .catch(error => {
           console.log(error.response.data.errors);
           this.errors = error.response.data.errors;
         });
 
-        // TNP API call for dropoffs
-      axios
-        .get(tnp_dropoff_url)
-        .then(response => {
-          let tnp_dropoffs_response = response.data;
-          console.log("tnp_dropoffs_response")
-          console.log(tnp_dropoffs_response)
-        })
-        .catch(error => {
-          console.log(error.response.data.errors);
-          this.errors = error.response.data.errors;
-        });
+        // Google Maps call for pretty name neighborhood
 
-        // Now collect metadata from other selections (persona, ride type)
-
-        // Now concatenate tnp_pickups_response, tnps_dropoffs_response, and metadata
     }
   }
 };
