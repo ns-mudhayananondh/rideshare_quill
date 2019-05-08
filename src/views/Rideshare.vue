@@ -147,26 +147,41 @@ export default {
       console.log(commarea_number);
       console.log(commarea_prettyname);
       this.errors = [];
-      let pickup_community_area = commarea_number
-      let url = "https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&pickup_community_area=" + pickup_community_area ;
-      console.log(url)
+      let tnp_pickup_url = "https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&pickup_community_area=" + commarea_number;
+      console.log(tnp_pickup_url);
+      let tnp_dropoff_url = "https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&dropoff_community_area=" + commarea_number;
+      console.log(tnp_dropoff_url);
+
+      // TNP API call for pickups
       axios
-        .get(url)
+        .get(tnp_pickup_url)
         .then(response => {
-          console.log(response);
+          let tnp_pickups_response = response.data;
+          console.log("tnp_pickups_response")
+          console.log(tnp_pickups_response)
         })
         .catch(error => {
           console.log(error.response.data.errors);
           this.errors = error.response.data.errors;
         });
+
+        // TNP API call for dropoffs
+      axios
+        .get(tnp_dropoff_url)
+        .then(response => {
+          let tnp_dropoffs_response = response.data;
+          console.log("tnp_dropoffs_response")
+          console.log(tnp_dropoffs_response)
+        })
+        .catch(error => {
+          console.log(error.response.data.errors);
+          this.errors = error.response.data.errors;
+        });
+
+        // Now collect metadata from other selections (persona, ride type)
+
+        // Now concatenate tnp_pickups_response, tnps_dropoffs_response, and metadata
     }
   }
 };
 </script>
-
-const randomId = 128398723
-const url = `/post/${randomId}`;
-getPost(url)
-export const getPost = (funcParamURL) => {
-  return axios.get(`${funcParamURL}`);
-}
