@@ -5,35 +5,64 @@
         <div class="col-xl-4 col-lg-5">
           <div class="card card-primary animated fadeInUp animation-delay-7">
             <div class="card-body">
-              <div class="text-center mb-2">
-                <span class="ms-logo ms-logo-sm mr-1">M</span>
-                <h3 class="no-m ms-site-title">
-                  Material
-                  <span>Style</span>
-                </h3>
-              </div>
               <form class="form-horizontal">
-                <fieldset class="container">
-                  <div class="form-group row">
-                    <label for="inputEmail" autocomplete="false" class="col-lg-2 control-label">Name</label>
-                    <div class="col-lg-9">
-                      <input type="text" class="form-control" id="inputName" placeholder="Name" />
+                <fieldset class="container justify-content-end">
+                  <div class="form-group row justify-content-end">
+                    <div class="form-group row justify-content-end">
+                      <label for="select112" class="col-lg-2 control-label"></label>
+                      <div class="col-lg-10">
+                        <select
+                          id="select112"
+                          class="form-control selectpicker"
+                          data-live-search="true"
+                          data-dropup-auto="false"
+                        >
+                          <option>Ea nam qui vel consequatur</option>
+                          <option>Dolorem perspiciatis adipisci</option>
+                          <option>Aperiam, debitis deleniti</option>
+                          <option>Accusamus non qui amet eum</option>
+                          <option>Doloremque commodi impedit</option>
+                        </select>
+                      </div>
+                    </div>
+                    <label class="col-lg-2 control-label justify-content-end"></label>
+                    <div class="col-lg-10">
+                      <div class="radio radio-primary">
+                        <h3>Persona:</h3>
+                        <label>
+                          <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="" />
+                          Driver
+                        </label>
+                      </div>
+                      <div class="radio radio-primary">
+                        <label>
+                          <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" />
+                          Passenger
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group row justify-content-end">
+                    <label class="col-lg-2 control-label"></label>
+                    <div class="col-lg-10">
+                      <div class="radio radio-primary">
+                        <h3>Ride Type:</h3>
+                        <label>
+                          <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="" />
+                          Individual
+                        </label>
+                      </div>
+                      <div class="radio radio-primary">
+                        <label>
+                          <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" />
+                          Shared
+                        </label>
+                      </div>
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="inputEmail" autocomplete="false" class="col-lg-2 control-label">Email</label>
-                    <div class="col-lg-9">
-                      <input type="email" class="form-control" id="inputEmail" placeholder="Email" />
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <label for="inputEmail" autocomplete="false" class="col-lg-2 control-label">Subject</label>
-                    <div class="col-lg-9">
-                      <input type="text" class="form-control" id="inputSubject" placeholder="Subject" />
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <label for="textArea" class="col-lg-2 control-label">Message</label>
+                    <label for="textArea" class="col-lg-2 control-label"></label>
                     <div class="col-lg-9">
                       <textarea class="form-control" rows="3" id="textArea" placeholder="Your message..."></textarea>
                     </div>
@@ -41,7 +70,6 @@
                   <div class="form-group row justify-content-end">
                     <div class="col-lg-10">
                       <button type="submit" class="btn btn-raised btn-primary">Quill it!</button>
-                      <button type="button" class="btn btn-danger">Cancel</button>
                     </div>
                   </div>
                 </fieldset>
