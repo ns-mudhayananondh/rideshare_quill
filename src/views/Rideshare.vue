@@ -5,22 +5,28 @@
         <div class="col-xl-4 col-lg-5">
           <div class="card card-primary animated fadeInUp animation-delay-7">
             <div class="card-body">
-              <form class="form-horizontal" v-on:submit.prevent="newQuill()" >
+              <form class="form-horizontal" v-on:submit.prevent="newQuill()">
                 <fieldset class="container">
                   <div class="form-group row justify-content-end">
-                      <div class="form-group row justify-content-end">
-                        <h3>Select a neighborhood:</h3>
-                        <label for="select112" class="col-lg-2 control-label"></label>
-                        <div class="col-lg-10">
-                          <select id="select112" class="form-control selectpicker" data-live-search="true" data-dropup-auto="false">
-                            <option>7 - Lincoln Park</option>
-                            <option>Dolorem perspiciatis adipisci </option>
-                            <option>Aperiam, debitis deleniti</option>
-                            <option>Accusamus non qui amet eum</option>
-                            <option>Doloremque commodi impedit</option>
-                          </select>
-                        </div>
+                    <div class="form-group row justify-content-end">
+                      <h3>Select a neighborhood:</h3>
+                      <label for="select112" class="col-lg-2 control-label"></label>
+                      <div class="col-lg-10">
+                        <select
+                          id="select112"
+                          class="form-control selectpicker"
+                          data-live-search="true"
+                          data-dropup-auto="false"
+                          v-model="commarea_full_selection"
+                        >
+                          <option>1 - Rogers Park</option>
+                          <option>2 - West Ridge</option>
+                          <option>3 - Uptown</option>
+                          <option>4 - Lincoln Square</option>
+                          <option>5 - North Center</option>
+                        </select>
                       </div>
+                    </div>
                     <label class="col-lg-2 control-label justify-content-end"></label>
                     <div class="col-lg-10">
                       <div class="radio radio-primary">
@@ -57,12 +63,6 @@
                       </div>
                     </div>
                   </div>
-                  <div class="form-group row">
-                    <label for="textArea" class="col-lg-2 control-label"></label>
-                    <div class="col-lg-9">
-                      <textarea class="form-control" rows="3" id="textArea" placeholder="Your message..."></textarea>
-                    </div>
-                  </div>
                   <div class="form-group row justify-content-end">
                     <div class="col-lg-10">
                       <button type="submit" class="btn btn-raised btn-primary">Quill it!</button>
@@ -79,29 +79,7 @@
               <h2 class="text-center no-m pt-4 pb-4 color-white index-1">Quill Content</h2>
             </div>
             <div class="card-body" id="quill-content">
-              <p>
-                So, you prefer to stare out the window in private contemplation or peacefully scroll through your phone
-                as you’re getting from A to B. We get it.
-              </p>
-              <p>You’re in good company. 80% of rides departing from Lincoln
-                Park are individual (non-pool/shared) fares. The typical individual ride leaving Lincoln Park will on
-                average cost around $13. Your desire to ride solo is coming at a cost, however. The average price of a
-                pool/shared ride departing from Lincoln Park is $7 - so you’re paying an additional $6 on average to
-                avoid that awkward “hello” to a fellow rider or - heaven forbid - having to ride shotgun.</p>
-              <p>During the week, individual fares on average are $2 cheaper than the going rate on the weekend. The most expensive time to rideshare from Lincoln Park is Saturday night ($15) and the least expensive time is Tuesday
-                afternoon ($8).</p>
-                <p>If you’re feeling lucky, 28% of shared rides departing from Lincoln Park do not pick up
-                additional passengers along the way. The best time to request a shared ride with the likelihood of
-                having no traveling companions is Wednesday evening. However if you do get stuck with additional riders,
-                you’ll make an average of 2.2 stops before you’re dropped off at your destination.
-              </p>
-              <p>Lincoln Park rider aren’t the most generous of tippers. The average tip for an individual fare is $0.46. That’s higher than
-                the average tip from shared fare passengers, averaging a paltry $0.17.
-                </p>
-                <p>Lincoln Park had its fair share of unusual trips. One rider on took a two-hour, forty mile trip only to be dropped off back in Lincoln Park at the end of it. The longest ride to depart from Lincoln Park was 62 miles. The most expensive
-                ride from Lincoln Park cost its rider $206. We saw one particularly stingy rider take a one hour fare
-                costing $110 and offer no gratuity to their driver. </p>
-              </p>
+              <p>{{ quill_response }}</p>
             </div>
           </div>
           <div class="card card-primary animated fadeInUp animation-delay-7" id="google-maps-holder">
@@ -112,8 +90,11 @@
               </h3>
             </div>
             <div id="google-map-div">
-            <img id="google-map" src="https://maps.googleapis.com/maps/api/staticmap?center=Chicago&zoom=14&size=730x380&key=AIzaSyD_1TkqGPWSc7UueUNPXDQLuNvUFuygIok"/>
-          </div>
+              <img
+                id="google-map"
+                src="https://maps.googleapis.com/maps/api/staticmap?center=Chicago&zoom=14&size=730x380&key=AIzaSyD_1TkqGPWSc7UueUNPXDQLuNvUFuygIok"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -129,27 +110,33 @@ var axios = require("axios");
 export default {
   data: function() {
     return {
-      commarea_full_selection: "7 - Lincoln Park",
+      commarea_full_selection: "",
       persona: "",
       ride_type: "",
-      commarea_number: ""
+      commarea_number: "",
+      quill_response: "You haven't submitted anything yet..."
     };
   },
   methods: {
     newQuill: function() {
       console.log(this.persona);
       console.log(this.ride_type);
+      console.log("This is the commarea_full_selection:");
       console.log(this.commarea_full_selection);
-      let commarea_number = this.commarea_full_selection.split('-')[0].trim();
-      let commarea_prettyname = this.commarea_full_selection.split('-')[1].trim();
+      let commarea_number = this.commarea_full_selection.split("-")[0].trim();
+      let commarea_prettyname = this.commarea_full_selection.split("-")[1].trim();
       console.log(commarea_number);
       console.log(commarea_prettyname);
       this.errors = [];
 
       // TODO: add in date filter for TNP data
-      let tnp_pickup_url = "https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&pickup_community_area=" + commarea_number;
+      let tnp_pickup_url =
+        "https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&pickup_community_area=" +
+        commarea_number;
       console.log(tnp_pickup_url);
-      let tnp_dropoff_url = "https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&dropoff_community_area=" + commarea_number;
+      let tnp_dropoff_url =
+        "https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&dropoff_community_area=" +
+        commarea_number;
       console.log(tnp_dropoff_url);
 
       // TNP API calls
@@ -157,22 +144,21 @@ export default {
         .get(tnp_pickup_url)
         .then(response => {
           let tnp_pickups_response = response.data;
-          console.log("tnp_pickups_response")
-          console.log(tnp_pickups_response)
+          console.log("tnp_pickups_response");
+          console.log(tnp_pickups_response);
 
-          axios.get(tnp_dropoff_url)
-          .then(response => {
-            let tnp_dropoffs_response = response.data
+          axios.get(tnp_dropoff_url).then(response => {
+            let tnp_dropoffs_response = response.data;
 
             // Now that we have both TNP results, concat themt ogether into final JSON spec for Quill
             // Also add in metadata from form
             var json_output_to_quill = {
-              "persona": this.persona,
-              "ride_type": this.ride_type,
-              "trips": tnp_pickups_response.concat(tnp_dropoffs_response)
-            }
+              persona: this.persona,
+              ride_type: this.ride_type,
+              trips: tnp_pickups_response.concat(tnp_dropoffs_response)
+            };
 
-            console.log(json_output_to_quill)
+            console.log(json_output_to_quill);
 
             let axiosConfig = {
               headers: {
@@ -181,29 +167,33 @@ export default {
                 "x-ns-api-token": "5cd1b5d935a4462969042285",
                 "x-ns-template": "5cd1b62135a44655154c706f"
               }
-            }
+            };
             // Now send the data spec to Quill API
-            axios.post('https://api.narrativescience.com/v4/editorial/5cd1b61f35a4464c554c7023/story/', json_output_to_quill, axiosConfig)
-            .then(response => {
-              let quill_response = response.data
-              console.log("quill_response")
-              console.log(quill_response)
-            })
-
-            // TODO: put Quill API server side to get around CORS issue
-
-          })
+            axios
+              .post(
+                "https://api.narrativescience.com/v4/editorial/5cd1b61f35a4464c554c7023/story/",
+                json_output_to_quill,
+                axiosConfig
+              )
+              .then(response => {
+                this.quill_response = response;
+                console.log("quill_response");
+                console.log(this.quill_response);
+              });
+          });
         })
         .catch(error => {
           console.log(error.response.data.errors);
           this.errors = error.response.data.errors;
         });
 
-        // Google Maps call for pretty name neighborhood
-        let map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" + encodeURI(commarea_prettyname) + ",Chicago&zoom=15&size=730x380&key=AIzaSyD_1TkqGPWSc7UueUNPXDQLuNvUFuygIok"
-        console.log(map_url)
-        document.getElementById('google-map').src = map_url
-
+      // Google Maps call for pretty name neighborhood
+      let map_url =
+        "https://maps.googleapis.com/maps/api/staticmap?center=" +
+        encodeURI(commarea_prettyname) +
+        ",Chicago&zoom=15&size=730x380&key=AIzaSyD_1TkqGPWSc7UueUNPXDQLuNvUFuygIok";
+      console.log(map_url);
+      document.getElementById("google-map").src = map_url;
     }
   }
 };
