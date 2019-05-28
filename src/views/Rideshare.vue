@@ -131,16 +131,18 @@ export default {
       console.log(commarea_prettyname);
       this.errors = [];
 
+      let limit = 1000;
+
       // TODO: add in date filter for TNP data
       let tnp_pickup_url =
-        encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&$limit=20000&$where=pickup_community_area=" +
+        encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&$limit=" + limit + "&$where=pickup_community_area=" +
         commarea_number + " AND dropoff_community_area !=" + commarea_number);
       console.log(tnp_pickup_url);
       let tnp_dropoff_url =
-        encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&$limit=20000&dropoff_community_area=" + commarea_number + " AND pickup_community_area !=" + commarea_number);
+        encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&$limit=" + limit + "&dropoff_community_area=" + commarea_number + " AND pickup_community_area !=" + commarea_number);
       console.log(tnp_dropoff_url);
       let tnp_pickup_and_dropoff_intersection_url =
-        encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&$limit=20000&dropoff_community_area=" + commarea_number + "&pickup_community_area=" + commarea_number);
+        encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&$limit=" + limit + "&dropoff_community_area=" + commarea_number + "&pickup_community_area=" + commarea_number);
       console.log(tnp_pickup_and_dropoff_intersection_url)
 
       // TNP API calls
@@ -164,8 +166,7 @@ export default {
                 persona: this.persona,
                 ride_type: this.ride_type,
                 neighborhood: this.commarea_prettyname,
-                // trips: tnp_pickups_response.concat(tnp_dropoffs_response).concat(tnp_pick_and_drop_response)
-                trips: "test"
+                trips: tnp_pickups_response.concat(tnp_dropoffs_response).concat(tnp_pick_and_drop_response)
               };
 
               console.log(json_output_to_quill);
