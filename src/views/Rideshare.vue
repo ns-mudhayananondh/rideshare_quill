@@ -114,6 +114,7 @@ export default {
       persona: "",
       ride_type: "",
       commarea_number: "",
+      commarea_prettyname: "",
       quill_response: "You haven't submitted anything yet..."
     };
   },
@@ -125,6 +126,7 @@ export default {
       console.log(this.commarea_full_selection);
       let commarea_number = this.commarea_full_selection.split("-")[0].trim();
       let commarea_prettyname = this.commarea_full_selection.split("-")[1].trim();
+      this.commarea_prettyname = commarea_prettyname;
       console.log(commarea_number);
       console.log(commarea_prettyname);
       this.errors = [];
@@ -155,6 +157,7 @@ export default {
             var json_output_to_quill = {
               persona: this.persona,
               ride_type: this.ride_type,
+              neighborhood: this.commarea_prettyname,
               trips: tnp_pickups_response.concat(tnp_dropoffs_response)
             };
 
