@@ -133,13 +133,15 @@ export default {
 
       // TODO: add in date filter for TNP data
       let tnp_pickup_url =
-        "https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&pickup_community_area=" +
-        commarea_number;
+        encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&$limit=20000&$where=pickup_community_area=" +
+        commarea_number + " AND dropoff_community_area !=" + commarea_number);
       console.log(tnp_pickup_url);
       let tnp_dropoff_url =
-        "https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&dropoff_community_area=" +
-        commarea_number;
+        encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&$limit=20000&dropoff_community_area=" + commarea_number + " AND pickup_community_area !=" + commarea_number);
       console.log(tnp_dropoff_url);
+      let tnp_pickup_and_dropoff_intersection_url =
+        encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&$limit=20000&dropoff_community_area=" + commarea_number + "&pickup_community_area=" + commarea_number);
+      console.log(tnp_pickup_and_dropoff_intersection_url)
 
       // TNP API calls
       axios
@@ -152,36 +154,42 @@ export default {
           axios.get(tnp_dropoff_url).then(response => {
             let tnp_dropoffs_response = response.data;
 
-            // Now that we have both TNP results, concat themt ogether into final JSON spec for Quill
-            // Also add in metadata from form
-            var json_output_to_quill = {
-              persona: this.persona,
-              ride_type: this.ride_type,
-              neighborhood: this.commarea_prettyname,
-              trips: tnp_pickups_response.concat(tnp_dropoffs_response)
-            };
+            axios.get(tnp_pickup_and_dropoff_intersection_url).then(response => {
+              let tnp_pick_and_drop_response = response.data;
 
-            console.log(json_output_to_quill);
 
-            let axiosConfig = {
-              headers: {
-                "content-type": "application/json",
-                "x-ns-accepts": "json",
-                "x-ns-api-token": "5cd1b5d935a4462969042285",
-                "x-ns-template": "5cd1b62135a44655154c706f"
-              }
-            };
-            // Now send the data spec to Quill API
-            axios
-              .post(
-                "https://api.narrativescience.com/v4/editorial/5cd1b61f35a4464c554c7023/story/",
-                json_output_to_quill,
-                axiosConfig
-              )
-              .then(response => {
-                this.quill_response = response;
-                console.log("quill_response");
-                console.log(this.quill_response);
+              // Now that we have both TNP results, concat themt ogether into final JSON spec for Quill
+              // Also add in metadata from form
+              var json_output_to_quill = {
+                persona: this.persona,
+                ride_type: this.ride_type,
+                neighborhood: this.commarea_prettyname,
+                // trips: tnp_pickups_response.concat(tnp_dropoffs_response).concat(tnp_pick_and_drop_response)
+                trips: "test"
+              };
+
+              console.log(json_output_to_quill);
+
+              let axiosConfig = {
+                headers: {
+                  "content-type": "application/json",
+                  "x-ns-accepts": "json",
+                  "x-ns-api-token": "5cd1b5d935a4462969042285",
+                  "x-ns-template": "5cd1b62135a44655154c706f"
+                }
+              };
+              // Now send the data spec to Quill API
+              axios
+                .post(
+                  "https://api.narrativescience.com/v4/press/5cd1b61f35a4464c554c7023/story/",
+                  json_output_to_quill,
+                  axiosConfig
+                )
+                .then(response => {
+                  this.quill_response = response.data[0].content;
+                  console.log("quill_response");
+                  console.log(this.quill_response);
+                });
               });
           });
         })
