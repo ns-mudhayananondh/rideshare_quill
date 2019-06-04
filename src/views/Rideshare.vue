@@ -115,6 +115,9 @@ export default {
       ride_type: "",
       commarea_number: "",
       commarea_prettyname: "",
+      // Mike 6/4 harcoding this as "morning" for now, see Mavenlink
+      // for all four possible string values
+      time: "morning",
       quill_response: "You haven't submitted anything yet..."
     };
   },
@@ -127,11 +130,17 @@ export default {
 
       let limit = 10000;
 
-      // TODO: add in date filter for TNP data
+      // Mike 6/4 hardcoded "time" filter hours for now, can implement
+      // similar to the commarea parsing once UI element built
       let tnp_pickup_url =
-        encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&$limit=" + limit + "&$where=pickup_community_area=" +
-        commarea_number + " AND dropoff_community_area !=" + commarea_number);
-      console.log("All pickups, no dropoffs:\n " + tnp_pickup_url);
+        encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW" +
+          "&$limit=" + limit +
+          "&$where=pickup_community_area=" + commarea_number +
+          " AND dropoff_community_area !=" + commarea_number +
+          " AND date_extract_hh(trip_start_timestamp) >= " + 6 +
+          " AND date_extract_hh(trip_start_timestamp) < " + 12);
+
+      console.log("All pickups, no dropoffs:\n\n" + tnp_pickup_url);
 
       // Mike June 4th, removing dropoffs since they're not necessary
       // let tnp_dropoff_url =
@@ -139,8 +148,14 @@ export default {
       // console.log(tnp_dropoff_url);
 
       let tnp_pickup_and_dropoff_intersection_url =
-        encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&$limit=" + limit + "&dropoff_community_area=" + commarea_number + "&pickup_community_area=" + commarea_number);
-      console.log("All pickups AND dropoffs:\n" + tnp_pickup_and_dropoff_intersection_url)
+        encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW" +
+          "&$limit=" + limit +
+          "&dropoff_community_area=" + commarea_number +
+          "&pickup_community_area=" + commarea_number +
+          "&$where=date_extract_hh(trip_start_timestamp) >= " + 6 +
+          " AND date_extract_hh(trip_start_timestamp) < " + 12);
+
+      console.log("All pickups AND dropoffs:\n\n"+ tnp_pickup_and_dropoff_intersection_url)
 
       // TNP API calls
       axios
@@ -162,6 +177,7 @@ export default {
                 persona: this.persona,
                 ride_type: this.ride_type,
                 neighborhood: this.commarea_prettyname,
+                time: this.time,
 
                 // Mike 6/4 removing this as part of removing dropoffs URL above
                 // trips: tnp_pickups_response.concat(tnp_dropoffs_response).concat(tnp_pick_and_drop_response)
