@@ -120,41 +120,37 @@ export default {
   },
   methods: {
     newQuill: function() {
-      console.log(this.persona);
-      console.log(this.ride_type);
-      console.log("This is the commarea_full_selection:");
-      console.log(this.commarea_full_selection);
       let commarea_number = this.commarea_full_selection.split("-")[0].trim();
       let commarea_prettyname = this.commarea_full_selection.split("-")[1].trim();
       this.commarea_prettyname = commarea_prettyname;
-      console.log(commarea_number);
-      console.log(commarea_prettyname);
       this.errors = [];
 
-      let limit = 1000;
+      let limit = 10000;
 
       // TODO: add in date filter for TNP data
       let tnp_pickup_url =
         encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&$limit=" + limit + "&$where=pickup_community_area=" +
         commarea_number + " AND dropoff_community_area !=" + commarea_number);
-      console.log(tnp_pickup_url);
-      let tnp_dropoff_url =
-        encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&$limit=" + limit + "&dropoff_community_area=" + commarea_number + " AND pickup_community_area !=" + commarea_number);
-      console.log(tnp_dropoff_url);
+      console.log("All pickups, no dropoffs:\n " + tnp_pickup_url);
+
+      // Mike June 4th, removing dropoffs since they're not necessary
+      // let tnp_dropoff_url =
+      //   encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&$limit=" + limit + "&dropoff_community_area=" + commarea_number + " AND pickup_community_area !=" + commarea_number);
+      // console.log(tnp_dropoff_url);
+
       let tnp_pickup_and_dropoff_intersection_url =
         encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&$limit=" + limit + "&dropoff_community_area=" + commarea_number + "&pickup_community_area=" + commarea_number);
-      console.log(tnp_pickup_and_dropoff_intersection_url)
+      console.log("All pickups AND dropoffs:\n" + tnp_pickup_and_dropoff_intersection_url)
 
       // TNP API calls
       axios
         .get(tnp_pickup_url)
         .then(response => {
           let tnp_pickups_response = response.data;
-          console.log("tnp_pickups_response");
-          console.log(tnp_pickups_response);
 
-          axios.get(tnp_dropoff_url).then(response => {
-            let tnp_dropoffs_response = response.data;
+          // Mike 6/4 removing this as part of removing dropoffs URL above
+          // axios.get(tnp_dropoff_url).then(response => {
+          //   let tnp_dropoffs_response = response.data;
 
             axios.get(tnp_pickup_and_dropoff_intersection_url).then(response => {
               let tnp_pick_and_drop_response = response.data;
@@ -166,17 +162,21 @@ export default {
                 persona: this.persona,
                 ride_type: this.ride_type,
                 neighborhood: this.commarea_prettyname,
-                trips: tnp_pickups_response.concat(tnp_dropoffs_response).concat(tnp_pick_and_drop_response)
+
+                // Mike 6/4 removing this as part of removing dropoffs URL above
+                // trips: tnp_pickups_response.concat(tnp_dropoffs_response).concat(tnp_pick_and_drop_response)
+                trips: tnp_pickups_response.concat(tnp_pick_and_drop_response)
               };
 
-              console.log(json_output_to_quill);
+              console.log("JSON output to Quill:\n\n");
+              console.log(json_output_to_quill)
 
               let axiosConfig = {
                 headers: {
                   "content-type": "application/json",
-                  "x-ns-accepts": "json",
+                  "x-ns-accepts": "html",
                   "x-ns-api-token": "5cd1b5d935a4462969042285",
-                  "x-ns-template": "5cd1b62135a44655154c706f"
+                  "x-ns-template": "5cf53c147a2618415718eaab"
                 }
               };
               // Now send the data spec to Quill API
@@ -187,12 +187,11 @@ export default {
                   axiosConfig
                 )
                 .then(response => {
-                  this.quill_response = response.data[0].content;
-                  console.log("quill_response");
-                  console.log(this.quill_response);
+                  this.quill_response = response.data;
+                  console.log("quill_response:\n\n" + this.quill_response);
                 });
               });
-          });
+          // });
         })
         .catch(error => {
           console.log(error.response.data.errors);
