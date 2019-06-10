@@ -42,19 +42,19 @@
                     <div class="radio radio-primary">
                       <h3>Timeslots:</h3>
                       <label>
-                        <input type="radio" name="optionsRadios" v-model="time" value="morning" checked="" />
+                        <input type="radio" name="optionsRadios2" v-model="time" value="morning" checked="" />
                         Morning: 06:00 - 11:59
                       </label>
                       <label>
-                        <input type="radio" name="optionsRadios" v-model="time" value="afternoon" checked="" />
+                        <input type="radio" name="optionsRadios2" v-model="time" value="afternoon" checked="" />
                         Afternoon: 12:00 - 17:59
                       </label>
                       <label>
-                        <input type="radio" name="optionsRadios" v-model="time" value="evening" checked="" />
+                        <input type="radio" name="optionsRadios2" v-model="time" value="evening" checked="" />
                         Evening: 18:00 - 23:59
                       </label>
                       <label>
-                        <input type="radio" name="optionsRadios" v-model="time" value="late_night" checked="" />
+                        <input type="radio" name="optionsRadios2" v-model="time" value="late_night" checked="" />
                         Late Night: 00:00 - 5:59
                       </label>
                     </div>
