@@ -108,11 +108,8 @@ export default {
     return {
       commarea_full_selection: "",
       persona: "",
-      ride_type: "",
       commarea_number: "",
       commarea_prettyname: "",
-      // Mike 6/4 harcoding this as "morning" for now, see Mavenlink
-      // for all four possible string values
       time: "",
       quill_response: "You haven't submitted anything yet...",
       dropdown_values: [
@@ -201,6 +198,33 @@ export default {
       let commarea_number = this.commarea_full_selection.split("-")[0].trim();
       let commarea_prettyname = this.commarea_full_selection.split("-")[1].trim();
       this.commarea_prettyname = commarea_prettyname;
+
+      // Temporary(?) solve for translating timeslot into start/end hours
+      let time_label = this.time;
+      let time_start_hour = 0;
+      let time_end_hour = 0;
+
+      if (time_label == "morning") {
+        time_start_hour = 6;
+        time_end_hour = 11;
+        console.log("morning selected");
+      } else if (time_label == "afternoon") {
+        time_start_hour = 12;
+        time_end_hour = 17;
+        console.log("afternoon selected");
+      } else if (time_label == "evening") {
+        time_start_hour = 18;
+        time_end_hour = 23;
+        console.log("evening selected");
+      } else {
+        time_start_hour = 0;
+        time_end_hour = 5;
+        console.log("late night selected");
+      }
+
+      console.log("start hour: " + time_start_hour);
+      console.log("end hour: " + time_end_hour);
+
       this.errors = [];
 
       let limit = 10000;
@@ -216,17 +240,12 @@ export default {
           " AND dropoff_community_area !=" +
           commarea_number +
           " AND date_extract_hh(trip_start_timestamp) >= " +
-          6 +
-          " AND date_extract_hh(trip_start_timestamp) < " +
-          12
+          time_start_hour +
+          " AND date_extract_hh(trip_start_timestamp) <= " +
+          time_end_hour
       );
 
       console.log("All pickups, no dropoffs:\n\n" + tnp_pickup_url);
-
-      // Mike June 4th, removing dropoffs since they're not necessary
-      // let tnp_dropoff_url =
-      //   encodeURI("https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW&$limit=" + limit + "&dropoff_community_area=" + commarea_number + " AND pickup_community_area !=" + commarea_number);
-      // console.log(tnp_dropoff_url);
 
       let tnp_pickup_and_dropoff_intersection_url = encodeURI(
         "https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW" +
@@ -237,9 +256,9 @@ export default {
           "&pickup_community_area=" +
           commarea_number +
           "&$where=date_extract_hh(trip_start_timestamp) >= " +
-          6 +
-          " AND date_extract_hh(trip_start_timestamp) < " +
-          12
+          time_start_hour +
+          " AND date_extract_hh(trip_start_timestamp) <= " +
+          time_end_hour
       );
 
       console.log("All pickups AND dropoffs:\n\n" + tnp_pickup_and_dropoff_intersection_url);
@@ -261,7 +280,6 @@ export default {
             // Also add in metadata from form
             var json_output_to_quill = {
               persona: this.persona,
-              ride_type: this.ride_type,
               neighborhood: this.commarea_prettyname,
               time: this.time,
               // Mike 6/4 removing this as part of removing dropoffs URL above
