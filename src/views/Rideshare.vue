@@ -227,7 +227,7 @@ export default {
 
       this.errors = [];
 
-      let limit = 10000;
+      let limit = 20000;
 
       // Mike 6/4 hardcoded "time" filter hours for now, can implement
       // similar to the commarea parsing once UI element built
@@ -247,34 +247,11 @@ export default {
 
       console.log("All pickups, no dropoffs:\n\n" + tnp_pickup_url);
 
-      let tnp_pickup_and_dropoff_intersection_url = encodeURI(
-        "https://data.cityofchicago.org/resource/m6dm-c72p.json?$$app_token=uQLbXrRXncBl4YeOvSLny1tNW" +
-          "&$limit=" +
-          limit +
-          "&dropoff_community_area=" +
-          commarea_number +
-          "&pickup_community_area=" +
-          commarea_number +
-          "&$where=date_extract_hh(trip_start_timestamp) >= " +
-          time_start_hour +
-          " AND date_extract_hh(trip_start_timestamp) <= " +
-          time_end_hour
-      );
-
-      console.log("All pickups AND dropoffs:\n\n" + tnp_pickup_and_dropoff_intersection_url);
-
       // TNP API calls
       axios
         .get(tnp_pickup_url)
         .then(response => {
           let tnp_pickups_response = response.data;
-
-          // Mike 6/4 removing this as part of removing dropoffs URL above
-          // axios.get(tnp_dropoff_url).then(response => {
-          //   let tnp_dropoffs_response = response.data;
-
-          axios.get(tnp_pickup_and_dropoff_intersection_url).then(response => {
-            let tnp_pick_and_drop_response = response.data;
 
             // Now that we have both TNP results, concat themt ogether into final JSON spec for Quill
             // Also add in metadata from form
@@ -282,9 +259,7 @@ export default {
               persona: this.persona,
               neighborhood: this.commarea_prettyname,
               time: this.time,
-              // Mike 6/4 removing this as part of removing dropoffs URL above
-              // trips: tnp_pickups_response.concat(tnp_dropoffs_response).concat(tnp_pick_and_drop_response)
-              trips: tnp_pickups_response.concat(tnp_pick_and_drop_response)
+              trips: tnp_pickups_response
             };
 
             console.log("JSON output to Quill:\n\n");
@@ -309,8 +284,6 @@ export default {
                 this.quill_response = response.data;
                 console.log("quill_response:\n\n" + this.quill_response);
               });
-          });
-          // });
         })
         .catch(error => {
           console.log(error.response.data.errors);
